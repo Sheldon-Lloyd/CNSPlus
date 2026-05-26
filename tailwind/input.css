@@ -1,0 +1,199 @@
+@import "tailwindcss";
+
+/* Tell Tailwind v4 where to find class usages. The CSS-first config form. */
+@source "../src/CNSPlus.Web/**/*.razor";
+@source "../src/CNSPlus.Web/**/*.cs";
+@source "../src/CNSPlus.Web.Client/**/*.razor";
+@source "../src/CNSPlus.Web.Client/**/*.cs";
+
+/* CNSPlus design tokens. Customize as the visual identity firms up. */
+@theme {
+    --color-brand-50:  oklch(0.97 0.02 264);
+    --color-brand-500: oklch(0.55 0.18 264);
+    --color-brand-700: oklch(0.40 0.18 264);
+
+    /* Character file palette — from demos/character.html. */
+    --color-bone:      #f4efe6;
+    --color-cream:     #fbf8f1;
+    --color-ink:       #161210;
+    --color-blood:     #e23528;
+    --color-rust:      #a82018;
+    --color-flame:     #f7a814;
+    --color-amberdeep: #e87a16;
+    --color-skin:      #7a5a52;
+    --color-steel:     #cfc8bd;
+
+    --font-poster: 'Bungee', cursive;
+    --font-slab:   'Archivo Black', sans-serif;
+    --font-body:   'Archivo', sans-serif;
+}
+
+/* Bespoke utility classes for the character file design. */
+.halftone {
+    background-image: radial-gradient(#161210 1.1px, transparent 1.2px);
+    background-size: 9px 9px;
+}
+.ink-edge   { border: 3px solid #161210; }
+.ink-edge-2 { border: 2px solid #161210; }
+.hard-shadow     { box-shadow: 7px 7px 0 #161210; }
+.hard-shadow-sm  { box-shadow: 4px 4px 0 #161210; }
+.hard-shadow-red { box-shadow: 6px 6px 0 #e23528; }
+.skew-tab     { transform: skewX(-9deg); }
+.skew-tab > * { transform: skewX(9deg); display: inline-block; }
+.stripe {
+    background: repeating-linear-gradient(45deg, #161210 0 14px, #f7a814 14px 28px);
+}
+.burst {
+    background: #f7a814;
+    clip-path: polygon(50% 0,61% 22%,85% 13%,76% 38%,100% 50%,76% 62%,85% 87%,61% 78%,50% 100%,39% 78%,15% 87%,24% 62%,0 50%,24% 38%,15% 13%,39% 22%);
+}
+.tag { letter-spacing: .04em; }
+.reveal {
+    opacity: 0;
+    transform: translateY(20px) rotate(-.4deg);
+    animation: pop .65s cubic-bezier(.18,1.2,.4,1) forwards;
+}
+@keyframes pop {
+    to { opacity: 1; transform: none; }
+}
+
+/* === Character abilities section (LoL-style tabs, zine palette). ===
+   Pure-CSS state machine: hidden radio inputs at the top of .abilities;
+   labels in .abilities-tabs reference them by id; panels in .ability-panels
+   are switched on/off via the :checked ~ sibling pattern. No JS needed. */
+
+.abilities .ability-radio {
+    position: absolute;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.ability-tab {
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1 / 1;
+    background: var(--color-cream);
+    border: 3px solid var(--color-ink);
+    box-shadow: 4px 4px 0 var(--color-ink);
+    transition: transform .15s ease, background-color .15s ease,
+                color .15s ease, box-shadow .15s ease;
+    padding: .25rem;
+}
+.ability-tab:hover { transform: translateY(-2px); background: var(--color-bone); }
+.ability-tab .ability-tab-key {
+    font-family: var(--font-poster);
+    font-size: clamp(1.5rem, 4.2vw, 2.4rem);
+    line-height: 1;
+    color: var(--color-ink);
+    transition: color .15s ease;
+}
+.ability-tab .ability-tab-type {
+    font-family: var(--font-slab);
+    font-size: .625rem;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    margin-top: .25rem;
+    color: rgba(22, 18, 16, .55);
+    text-align: center;
+    line-height: 1;
+    transition: color .15s ease;
+}
+
+/* Active tab — driven by sibling :checked radio. */
+.abilities .ability-radio:nth-of-type(1):checked ~ .abilities-tabs .ability-tab:nth-of-type(1),
+.abilities .ability-radio:nth-of-type(2):checked ~ .abilities-tabs .ability-tab:nth-of-type(2),
+.abilities .ability-radio:nth-of-type(3):checked ~ .abilities-tabs .ability-tab:nth-of-type(3),
+.abilities .ability-radio:nth-of-type(4):checked ~ .abilities-tabs .ability-tab:nth-of-type(4),
+.abilities .ability-radio:nth-of-type(5):checked ~ .abilities-tabs .ability-tab:nth-of-type(5) {
+    background: var(--color-ink);
+    transform: translate(2px, -4px);
+    box-shadow: 6px 8px 0 var(--color-blood);
+}
+.abilities .ability-radio:nth-of-type(1):checked ~ .abilities-tabs .ability-tab:nth-of-type(1) .ability-tab-key,
+.abilities .ability-radio:nth-of-type(2):checked ~ .abilities-tabs .ability-tab:nth-of-type(2) .ability-tab-key,
+.abilities .ability-radio:nth-of-type(3):checked ~ .abilities-tabs .ability-tab:nth-of-type(3) .ability-tab-key,
+.abilities .ability-radio:nth-of-type(4):checked ~ .abilities-tabs .ability-tab:nth-of-type(4) .ability-tab-key,
+.abilities .ability-radio:nth-of-type(5):checked ~ .abilities-tabs .ability-tab:nth-of-type(5) .ability-tab-key {
+    color: var(--color-flame);
+}
+.abilities .ability-radio:nth-of-type(1):checked ~ .abilities-tabs .ability-tab:nth-of-type(1) .ability-tab-type,
+.abilities .ability-radio:nth-of-type(2):checked ~ .abilities-tabs .ability-tab:nth-of-type(2) .ability-tab-type,
+.abilities .ability-radio:nth-of-type(3):checked ~ .abilities-tabs .ability-tab:nth-of-type(3) .ability-tab-type,
+.abilities .ability-radio:nth-of-type(4):checked ~ .abilities-tabs .ability-tab:nth-of-type(4) .ability-tab-type,
+.abilities .ability-radio:nth-of-type(5):checked ~ .abilities-tabs .ability-tab:nth-of-type(5) .ability-tab-type {
+    color: rgba(251, 248, 241, .7);
+}
+
+/* Keyboard focus mirrors onto the label. */
+.abilities .ability-radio:nth-of-type(1):focus-visible ~ .abilities-tabs .ability-tab:nth-of-type(1),
+.abilities .ability-radio:nth-of-type(2):focus-visible ~ .abilities-tabs .ability-tab:nth-of-type(2),
+.abilities .ability-radio:nth-of-type(3):focus-visible ~ .abilities-tabs .ability-tab:nth-of-type(3),
+.abilities .ability-radio:nth-of-type(4):focus-visible ~ .abilities-tabs .ability-tab:nth-of-type(4),
+.abilities .ability-radio:nth-of-type(5):focus-visible ~ .abilities-tabs .ability-tab:nth-of-type(5) {
+    outline: 3px dashed var(--color-blood);
+    outline-offset: 4px;
+}
+
+/* Panel switching. */
+.ability-panel { display: none; }
+.abilities .ability-radio:nth-of-type(1):checked ~ .ability-panels .ability-panel:nth-of-type(1),
+.abilities .ability-radio:nth-of-type(2):checked ~ .ability-panels .ability-panel:nth-of-type(2),
+.abilities .ability-radio:nth-of-type(3):checked ~ .ability-panels .ability-panel:nth-of-type(3),
+.abilities .ability-radio:nth-of-type(4):checked ~ .ability-panels .ability-panel:nth-of-type(4),
+.abilities .ability-radio:nth-of-type(5):checked ~ .ability-panels .ability-panel:nth-of-type(5) {
+    display: grid;
+    animation: ability-fade .35s cubic-bezier(.18, 1.2, .4, 1) both;
+}
+@keyframes ability-fade {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* Giant key-letter watermark used when an ability has no image. */
+.ability-watermark {
+    font-family: var(--font-poster);
+    font-size: clamp(9rem, 24vw, 18rem);
+    line-height: .85;
+    color: var(--color-ink);
+    transform: rotate(-4deg);
+    user-select: none;
+}
+
+/* Blazor-generated validation styles. Applied automatically by EditForm. */
+.valid.modified:not([type=checkbox]) {
+    outline: 1px solid #26b050;
+}
+.invalid {
+    outline: 1px solid #e50000;
+}
+.validation-message {
+    color: #e50000;
+}
+
+/* Error UI banner emitted by the host when an unhandled exception bubbles. */
+#blazor-error-ui {
+    color-scheme: light only;
+    background: #fff8c4;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}

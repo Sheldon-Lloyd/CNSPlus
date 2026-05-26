@@ -1,0 +1,202 @@
+@page "/comic/{Slug}"
+@layout CharacterLayout
+@inject IComicsClient ComicsApi
+@inject NavigationManager Nav
+
+<PageTitle>@(_comic?.Title ?? _comic?.Slug ?? "Reader") · Cyber.Beast</PageTitle>
+
+@if (_comic is null)
+{
+    <main class="max-w-6xl mx-auto px-5 py-8">
+        <p class="font-slab text-sm tag uppercase text-ink/60">Loading…</p>
+    </main>
+}
+else
+{
+    var pageCount = _pages.Count;
+    var currentIndex = ResolveCurrentIndex();
+    var current = _pages[currentIndex];
+    var prevNumber = currentIndex > 0 ? (int?)_pages[currentIndex - 1].Number : null;
+    var nextNumber = currentIndex < pageCount - 1 ? (int?)_pages[currentIndex + 1].Number : null;
+
+    <main class="max-w-6xl mx-auto px-5 py-8 md:py-12">
+
+        <header class="reveal flex flex-wrap items-center justify-between gap-3 mb-8" style="animation-delay:.03s">
+            <div class="skew-tab bg-ink text-flame px-4 py-1.5 hard-shadow-sm">
+                <span class="font-poster text-sm tag">READER // @(_comic.Title?.ToUpperInvariant() ?? _comic.Slug.ToUpperInvariant())</span>
+            </div>
+            <div class="font-slab text-xs text-ink/70 tag">PAGE @($"{current.Number:00}") / @($"{pageCount:00}")</div>
+        </header>
+
+        <section class="reveal mb-8" style="animation-delay:.1s">
+            <p class="font-slab text-blood text-sm tag uppercase mb-1">Cyber.beast universe · now reading</p>
+            @{ var (head, tail) = SplitTitle(_comic.Title ?? _comic.Slug); }
+            <h1 class="font-poster text-5xl md:text-6xl leading-[0.85] text-ink">
+                @head<span class="text-blood">@tail</span>
+            </h1>
+        </section>
+
+        <section class="reveal mb-10" style="animation-delay:.18s">
+            <div class="grid sm:grid-cols-2 gap-5">
+                @foreach (var panel in current.Panels)
+                {
+                    <figure class="ink-edge bg-cream hard-shadow overflow-hidden relative">
+                        <div class="relative aspect-[4/3]">
+                            <div class="absolute inset-0 halftone opacity-[0.05] pointer-events-none z-10"></div>
+                            @if (panel.ImageUrl is null)
+                            {
+                                <div class="absolute inset-0 flex items-center justify-center"
+                                     style="background-color:#fbf8f1;background-image:repeating-linear-gradient(45deg,#161210 0 2px,transparent 2px 16px);"
+                                     role="img"
+                                     aria-label="@(panel.AltText ?? panel.Caption ?? $"Panel {panel.Number} — art pending")">
+                                    <div class="bg-cream ink-edge-2 px-4 py-2 -rotate-3">
+                                        <span class="font-slab text-sm tag uppercase">Art Pending</span>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <img src="@panel.ImageUrl" alt="@(panel.AltText ?? panel.Caption ?? $"Panel {panel.Number}")" class="w-full h-full object-cover block" />
+                            }
+                            <div class="absolute top-0 left-0 bg-blood text-cream font-poster text-xs px-3 py-1.5 ink-edge-2 -ml-0.5 -mt-0.5 z-20">
+                                @($"{panel.Number:00}")
+                            </div>
+                        </div>
+                        @if (!string.IsNullOrWhiteSpace(panel.Caption))
+                        {
+                            <figcaption class="bg-ink/90 text-bone px-4 py-2 font-slab text-[11px] tag uppercase">
+                                @panel.Caption
+                            </figcaption>
+                        }
+                    </figure>
+                }
+            </div>
+        </section>
+
+        <nav class="reveal flex items-center justify-between gap-3 border-t-2 border-ink pt-5" style="animation-delay:.28s">
+            @if (prevNumber is int prev)
+            {
+                <a href="@PageUrl(prev)" class="ink-edge-2 bg-cream text-ink font-slab text-xs tag uppercase px-4 py-2 hard-shadow-sm hover:-translate-y-0.5 transition-transform">
+                    &larr; Prev page
+                </a>
+            }
+            else
+            {
+                <span class="ink-edge-2 bg-cream text-ink font-slab text-xs tag uppercase px-4 py-2 hard-shadow-sm opacity-30 cursor-not-allowed">
+                    &larr; Prev page
+                </span>
+            }
+
+            <ol class="flex flex-wrap items-center justify-center gap-2">
+                @foreach (var page in _pages)
+                {
+                    var isActive = page.Number == current.Number;
+                    <li>
+                        @if (isActive)
+                        {
+                            <span class="ink-edge-2 bg-ink text-flame font-poster text-xs px-3 py-1.5 hard-shadow-sm" aria-current="page">
+                                @($"{page.Number:00}")
+                            </span>
+                        }
+                        else
+                        {
+                            <a href="@PageUrl(page.Number)"
+                               class="ink-edge-2 bg-cream text-ink font-poster text-xs px-3 py-1.5 hard-shadow-sm hover:-translate-y-0.5 transition-transform inline-block"
+                               aria-label="@($"Go to page {page.Number}")">
+                                @($"{page.Number:00}")
+                            </a>
+                        }
+                    </li>
+                }
+            </ol>
+
+            @if (nextNumber is int next)
+            {
+                <a href="@PageUrl(next)" class="ink-edge-2 bg-blood text-cream font-slab text-xs tag uppercase px-4 py-2 hard-shadow-sm hover:-translate-y-0.5 transition-transform">
+                    Next page &rarr;
+                </a>
+            }
+            else
+            {
+                <span class="ink-edge-2 bg-blood text-cream font-slab text-xs tag uppercase px-4 py-2 hard-shadow-sm opacity-30 cursor-not-allowed">
+                    Next page &rarr;
+                </span>
+            }
+        </nav>
+
+        <footer class="reveal mt-8 flex items-center justify-between font-slab text-xs tag uppercase text-ink/70" style="animation-delay:.36s">
+            <a href="/" class="hover:text-blood transition-colors">&larr; Home</a>
+            <span class="hidden sm:inline">@_comic.PublishedAt.UtcDateTime.ToString("MMM d, yyyy")</span>
+            <a href="/characters" class="hover:text-blood transition-colors">Roster &rarr;</a>
+        </footer>
+    </main>
+}
+
+@code {
+    [Parameter] public string? Slug { get; set; }
+
+    [SupplyParameterFromQuery(Name = "page")]
+    public int? PageNumber { get; set; }
+
+    private Comic? _comic;
+    private List<ComicPage> _pages = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var all = await ComicsApi.ListAsync(featured: null, limit: null);
+            var match = all.FirstOrDefault(c => c.Slug == Slug);
+            if (match is null)
+            {
+                Nav.NavigateTo("/not-found");
+                return;
+            }
+            _comic = match;
+            _pages = (match.Pages is { Count: > 0 } pages
+                ? pages.ToList()
+                : new List<ComicPage> { SinglePageFallback(match) });
+        }
+        catch (ApiException ex) when (ex.StatusCode == 404)
+        {
+            Nav.NavigateTo("/not-found");
+        }
+    }
+
+    private int ResolveCurrentIndex()
+    {
+        if (_pages.Count == 0) return 0;
+        if (PageNumber is int n)
+        {
+            var idx = _pages.FindIndex(p => p.Number == n);
+            if (idx >= 0) return idx;
+        }
+        return 0;
+    }
+
+    private string PageUrl(int number) => $"/comic/{Slug}?page={number}";
+
+    private static ComicPage SinglePageFallback(Comic comic) => new()
+    {
+        Number = 1,
+        Panels = new List<ComicPanel>
+        {
+            new()
+            {
+                Number = 1,
+                ImageUrl = comic.ImageUrl,
+                Caption = comic.Caption,
+                AltText = comic.AltText,
+            }
+        }
+    };
+
+    private static (string Head, string Tail) SplitTitle(string title)
+    {
+        var upper = title.ToUpperInvariant();
+        var space = upper.IndexOf(' ');
+        if (space > 0 && space < upper.Length - 1) return (upper[..space], upper[space..]);
+        var mid = (upper.Length + 1) / 2;
+        return (upper[..mid], upper[mid..]);
+    }
+}

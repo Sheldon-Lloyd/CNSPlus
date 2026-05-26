@@ -1,0 +1,62 @@
+@inherits LayoutComponentBase
+@inject NavigationManager Nav
+
+<HeadContent>
+    @*
+        The link to webcomic-plus.css MUST stay inside the layout's single
+        HeadContent. Blazor's HeadContent is "last-wins" — if a page also
+        declared <HeadContent>, this link would be replaced. So pages
+        contribute additional head content via the section below instead
+        of opening their own HeadContent.
+    *@
+    <link rel="stylesheet" href="css/webcomic-plus.css" />
+    <SectionOutlet SectionName="head-extras" />
+</HeadContent>
+
+<SectionOutlet SectionName="hero" />
+
+<header class="header">
+    <label for="main-nav" class="header-title float-left pointer">Comic Name</label>
+    <h1><SectionOutlet SectionName="page-title" /></h1>
+</header>
+<input class="is-hidden" id="main-nav" type="checkbox" />
+
+<nav class="main-nav float-left">
+    <ul>
+        <li class="@IsActive("/", exact: true)"><a href="/">Home</a></li>
+        <li class="@IsActive("/collection")">
+            <input class="is-hidden" type="checkbox" id="collection-list" />
+            <label for="collection-list" class="pointer">Collection</label>
+            <ul class="collection-list is-hidden">
+                <li><a href="/comic/comic-1">Comic 1</a></li>
+                <li><a>Comic 2</a></li>
+                <li><a>Comic 3</a></li>
+                <li><a>Comic 4</a></li>
+                <li><a>Comic 5</a></li>
+            </ul>
+        </li>
+        <li class="@IsActive("/characters")"><a href="/characters">Characters</a></li>
+        <li><a>Blog</a></li>
+        <li><a>Calendar</a></li>
+    </ul>
+</nav>
+
+<main class="overflow-auto">
+    @Body
+</main>
+
+<SectionOutlet SectionName="aside" />
+
+@code {
+    private string IsActive(string path, bool exact = false)
+    {
+        var current = new Uri(Nav.Uri).AbsolutePath;
+        if (exact)
+        {
+            return current == path ? "is-active" : "";
+        }
+        return current == path || current.StartsWith(path + "/", StringComparison.Ordinal)
+            ? "is-active"
+            : "";
+    }
+}

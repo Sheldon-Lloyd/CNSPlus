@@ -1,0 +1,57 @@
+<character>
+  <id>2a7e9c4f-8d6b-4135-a0e7-c9f3b5d8e641</id>
+  <createdBy>4e2a9c11-7f5b-4d63-9a02-1f6c8b4e5d70</createdBy>
+  <universeId>b1d3f7a4-2c8e-49a5-bc01-7e3a5d9f6b82</universeId>
+  <slug>kyshumu</slug>
+  <name>Kyshumu</name>
+  <artUrl>https://pre00.deviantart.net/bdec/th/pre/i/2017/358/e/c/kyshumu_blaise_by_sheldon227-dbxpy7r.png</artUrl>
+  <description><![CDATA[
+Kyshumu Blaise is the Chief of the ReNet Network and number 1 ranked Cybervator. He is impulsive and mistrustful but loyal and protective towards those he cares about. Although he is a Chief he still tries to fight every chance he gets so that he can retain his number one ranking.
+
+When Kyshumu fights —while going into burst drive mode—he pounces into action and roars with a glass shattering battle cry thanks to his lion-leopard he synergizes with.
+
+He originally started with just a leopard Cyber.Beast but was given a lion cyberbeast by his wife Tomasina as a courting gift. He now uses a Lion-Leopard hybrid combined with his fire element and strength ability. This enables him to have an unorthodox fighting style — although his specialty is strength, he combines it with his fire element to generate power in short bursts. This gives him incredible jumping ability, allowing him to be as fast as most speed-type cybervators and jump as high as many flying types can fly.
+  ]]></description>
+  <createdAt>2017-12-24T00:00:00Z</createdAt>
+  <updatedAt>2017-12-24T00:00:00Z</updatedAt>
+  <modes>
+
+  </modes>
+  <abilities>
+    <ability>
+      <key>P</key>
+      <type>Passive</type>
+      <name>Burst Drive</name>
+      <imageUrl></imageUrl>
+      <description><![CDATA[Charges with every blow landed and taken. When the meter peaks, Kyshumu enters Burst Drive — pupils blown wide, fire-rimmed, every muscle running hot — and the next ability he uses costs nothing and hits twice.]]></description>
+    </ability>
+    <ability>
+      <key>Q</key>
+      <type>Ability 1</type>
+      <name>Lion-Leopard Synergy</name>
+      <imageUrl></imageUrl>
+      <description><![CDATA[Bonds with both halves of his hybrid Cyber.Beast at once — the leopard for the lunge, the lion for the impact. A short-range pounce that closes the gap and lands with a shockwave through whatever's standing where the target used to be.]]></description>
+    </ability>
+    <ability>
+      <key>W</key>
+      <type>Ability 2</type>
+      <name>Fire-Element Burst</name>
+      <imageUrl></imageUrl>
+      <description><![CDATA[Channels the fire element through a strike. Power is generated in a single concentrated spike rather than sustained output — devastating on contact, exhausting after. Used to break guards, walls, and the occasional contract.]]></description>
+    </ability>
+    <ability>
+      <key>E</key>
+      <type>Ability 3</type>
+      <name>Skyleap</name>
+      <imageUrl></imageUrl>
+      <description><![CDATA[Combines fire and strength into the legs and detonates downward. Kyshumu launches high enough to meet flying-type Cybervators in their own air, then comes down somewhere he wasn't supposed to be able to reach.]]></description>
+    </ability>
+    <ability>
+      <key>R</key>
+      <type>Ultimate</type>
+      <name>Glass-Shattering Roar</name>
+      <imageUrl></imageUrl>
+      <description><![CDATA[The lion side surfaces. A battle cry pitched to crack any structure tuned to a resonance — armor, barriers, the inside of an opponent's helmet. The signature opening move of the Chief of the ReNet Network, and the reason most fights end before they start.]]></description>
+    </ability>
+  </abilities>
+</character>
